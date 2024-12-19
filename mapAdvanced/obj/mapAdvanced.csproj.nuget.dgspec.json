@@ -1,0 +1,73 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\APP Fuzzy\\mapAdvanced\\mapAdvanced\\mapAdvanced.csproj": {}
+  },
+  "projects": {
+    "D:\\APP Fuzzy\\mapAdvanced\\mapAdvanced\\mapAdvanced.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\APP Fuzzy\\mapAdvanced\\mapAdvanced\\mapAdvanced.csproj",
+        "projectName": "mapAdvanced",
+        "projectPath": "D:\\APP Fuzzy\\mapAdvanced\\mapAdvanced\\mapAdvanced.csproj",
+        "packagesPath": "C:\\Users\\fuzzy\\.nuget\\packages\\",
+        "outputPath": "D:\\APP Fuzzy\\mapAdvanced\\mapAdvanced\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\fuzzy\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "dependencies": {
+            "MaterialDesignThemes": {
+              "target": "Package",
+              "version": "[5.1.0, )"
+            },
+            "MaterialDesignThemes.MahApps": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
+            "Microsoft.Web.WebView2": {
+              "target": "Package",
+              "version": "[1.0.2903.40, )"
+            },
+            "System.Text.Json": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

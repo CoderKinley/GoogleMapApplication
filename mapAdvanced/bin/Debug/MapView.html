@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps - Lazy Loading Markers</title>
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-info-window {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+            max-width: 250px;
+        }
+
+            .custom-info-window h3 {
+                margin: 0 0 10px 0;
+                color: #333;
+            }
+
+            .custom-info-window p {
+                margin: 5px 0;
+                color: #666;
+            }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key={googleMapsApiKey}"></script>
+    <script>
+        let map;
+        let renderedMarkers = new Map();
+        let markers = [];
+        let maxCustomer;
+        let minCustomer;
+        let customerCountsArray = [];
+        let requiredLocationData = "";
+        const meterData = { locationJson }; // js objects {[{},{},{},{}]}
+        const centPosition = { lat: 27.5002, lng: 90.5081 };
+        let dt_list = [];
+        const colors = [
+            "#00FFF0", // Aqua Blue
+            "#FF5733", // Red-Orange
+            "#FF1493", // Deep Pink
+            "#5733FF", // Violet
+            "#FF33A6", // Hot Pink
+            "#33A6FF", // Sky Blue
+            "#FFD700", // Gold
+            "#20B2AA", // Light Sea Green
+            "#8A2BE2", // Blue Violet
+            "#FF4500", // Orange Red
+            "#D2691E", // Chocolate
+            "#DDA0DD", // Plum
+            "#F4A300", // Tiger Orange
+            "#FF00FF", // Magenta
+            "#FF8C00", // Dark Orange
+            "#6A5ACD", // Slate Blue
+            "#00008B", // Dark Blue
+            "#228B22", // Forest Green
+            "#4682B4", // Steel Blue
+            "#7FFF00", // Chartreuse
+            "#C71585", // Medium Violet Red
+            "#00BFFF", // Deep Sky Blue
+            "#B22222", // Firebrick
+            "#E0FFFF", // Light Cyan
+            "#808000", // Olive
+            "#A52A2A", // Brown
+            "#4B0082", // Indigo
+            "#00FF7F", // Spring Green
+            "#8B4513", // Saddle Brown
+            "#6B8E23", // Olive Drab
+            "#FF7F50", // Coral
+            "#B0C4DE", // Light Steel Blue
+            "#F0E68C"  // Khaki
+        ];
+
+
+        let colorIndex = 0;
+
+        function isValidCoordinates(lat, lng) {
+            return lat >= 26 && lat <= 28 && lng >= 88 && lng <= 93;
+        }
+
+
+        // initialize the map
+        function initMap() {
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: centPosition,
+                zoom: 10,
+                mapTypeId: "satellite",
+                mapTypeControl: true,
+                zoomControl: true,
+                scaleControl: true,
+                streetViewControl: true,
+                rotateControl: true,
+                fullscreenControl: false,
+            });
+        }
+
+        // thsi function start to mark the location by calculating the requried marke lcoation 
+        function startMarking() {
+            clearAllMarkers();
+
+            const validLocations = meterData.filter(location => {
+                const lat = parseFloat(location.latitude);
+                const lng = parseFloat(location.longitude);
+                const hasValidCoordinates = !isNaN(lat) && !isNaN(lng) && isValidCoordinates(lat, lng);
+                const isCityValid = requiredLocationData.split(",")
+                    .map(city => city.trim())
+                    .some(city => city.toLowerCase() === location.district_name.toLowerCase());
+                return hasValidCoordinates && isCityValid;
+            });
+
+            customerCountsArray = validLocations.map(location =>
+                parseInt(location.total_customer_count) || 0
+            ).filter(count => !isNaN(count));
+
+            if (customerCountsArray.length > 0) {
+                maxCustomer = Math.max(...customerCountsArray) >= 5
+                    ? Math.max(...customerCountsArray)
+                    : 5;
+                minCustomer = Math.min(...customerCountsArray);
+            }
+
+            renderAllMarkers(validLocations);
+        }
+
+        // Calculate the scale based on customer count
+        function scaleCalculator(inputNumber) {
+            const inputMin = 6;
+            const inputMax = 500;
+            const outputMin = 8;
+            const outputMax = 50;
+
+            return ((inputNumber - inputMin) / (inputMax - inputMin)) *
+                (outputMax - outputMin) + outputMin;
+        }
+
+        function randomColorReturn() {
+            const color = colors[colorIndex];
+            colorIndex = (colorIndex + 1) % colors.length; // resets upon reaching the end of the color line
+            return color;
+        }
+
+        function renderNewMarkers(locations) {
+            const bounds = new google.maps.LatLngBounds();
+            let first_feeder_name = locations[0].feeder_name;
+            let first_color = randomColorReturn();
+
+            console.log("First feeder name");
+            console.log(first_feeder_name);
+
+            locations.forEach(location => {
+                const lat = parseFloat(location.latitude);
+                const lng = parseFloat(location.longitude);
+                const position = { lat: lat, lng: lng };
+                let feeder_name = location.feeder_name;
+
+                if (first_feeder_name == location.feeder_name) {
+                    console.log('feeder name');
+                    console.log(first_feeder_name);
+                    console.log(feeder_name);
+
+                    const customerCount = parseInt(location.total_customer_count) || 0;
+                    const locationKey = `${lat},${lng}`;
+
+                    if (renderedMarkers.has(locationKey)) {
+                        return;
+                    }
+
+                    const markerScale = scaleCalculator(customerCount);
+
+                    const randomColor = colors[Math.floor(Math.random() * colors.length)]; // give any color from the list of colors
+                    const marker = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: markerScale,
+                            fillColor: first_color,
+                            fillOpacity: 0.5,
+                            strokeColor: first_color,
+                            strokeWeight: 1,
+                        },
+                    });
+
+                    bounds.extend(position);
+                    markers.push(marker);
+
+                    renderedMarkers.set(locationKey, {
+                        marker: marker,
+                        location: location
+                    });
+
+                    // Info window for the marker
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `<div class="custom-info-window">
+                        <h3>${location.dt_name}</h3>
+                        <p>DT ID: ${location.dt_id}</p>
+                        <p>Capacity: ${location.dt_capacity_kva} kVA</p>
+                        <p>Total Customers: ${location.total_customer_count}</p>
+                      </div>`,
+                        disableAutoPan: true,
+                    });
+
+                    google.maps.event.addListener(infoWindow, 'domready', () => {
+                        const closeButton = document.querySelector('.gm-style-iw button.gm-ui-hover-effect');
+                        if (closeButton) {
+                            closeButton.style.display = 'none';
+                        }
+                    });
+
+                    marker.addListener('mouseover', () => {
+                        infoWindow.open(map, marker);
+                        marker.setIcon({
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: markerScale + 5,
+                            fillColor: first_color,
+                            fillOpacity: 0.7,
+                            strokeColor: first_color,
+                            strokeWeight: 1.5,
+                        });
+                    });
+
+                    marker.addListener('mouseout', () => {
+                        infoWindow.close();
+                        marker.setIcon({
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: markerScale,
+                            fillColor: first_color,
+                            fillOpacity: 0.5,
+                            strokeColor: first_color,
+                            strokeWeight: 1,
+                        });
+                    });
+                }
+                else{
+                    first_feeder_name = location.feeder_name;
+                    first_color = randomColorReturn();
+                }
+            });
+
+            if (markers.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                markers.forEach(marker => bounds.extend(marker.getPosition()));
+                map.fitBounds(bounds);
+                map.panToBounds(bounds);
+            }
+            else {
+                map.setCenter();
+                map.zoom(8);
+            }
+        }
+        function removeMarkers(locationsToRemove) {
+            console.log("called this function");
+            locationsToRemove.forEach(location => {
+                const lat = parseFloat(location.latitude);
+                const lng = parseFloat(location.longitude);
+                const locationKey = `${lat},${lng}`;
+
+                const renderedMarker = renderedMarkers.get(locationKey);
+                if (renderedMarker) {
+                    renderedMarker.marker.setMap(null);
+                    const index = markers.indexOf(renderedMarker.marker);
+                    if (index > -1) {
+                        markers.splice(index, 1);
+                    }
+                    renderedMarkers.delete(locationKey);
+                    console.log("removed the marker");
+                }
+            });
+
+            if (markers.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                markers.forEach(marker => bounds.extend(marker.getPosition()));
+                map.fitBounds(bounds);
+            } else {
+                map.setCenter(); 
+                map.setZoom(8);
+            }
+        }
+
+        function initiateMarking(locationData) {
+            const newCustomerCountsArray = locationData.map(location =>
+                parseInt(location.total_customer_count) || 0
+            ).filter(count => !isNaN(count));
+
+            if (newCustomerCountsArray.length > 0) {
+                maxCustomer = Math.max(
+                    maxCustomer || 0,
+                    Math.max(...newCustomerCountsArray) >= 5
+                        ? Math.max(...newCustomerCountsArray)
+                        : 5
+                );
+                minCustomer = Math.min(
+                    minCustomer || Infinity,
+                    Math.min(...newCustomerCountsArray)
+                );
+            }
+            renderNewMarkers(locationData);
+        }
+
+
+        //function addMarker(DzongkhagName) {
+        //    requiredLocationData = DzongkhagName;
+        //    //startMarking();
+        //}
+
+        //function viewAllData(data) {
+        //    console.log("This is the data==> ",data);
+        //}
+
+        // new entry point
+        function addData(markers_data) {
+            initiateMarking(markers_data);
+        }
+
+        // Deletion of data
+        function removeData(removeDatas) {
+            console.log("this are the data to be removed");
+            console.log(removeDatas);
+            if (!Array.isArray(removeDatas) || removeDatas.length === 0) {
+                console.warn("No data provided for removal");
+                return;
+            }
+
+            else {
+                removeMarkers(removeDatas);
+            }
+        }
+
+        // clear all the markers that are not required
+        function clearAllMarkers() {
+            renderedMarkers.forEach((markerData) => {
+                if (markerData.marker) {
+                    markerData.marker.setMap(null);
+                }
+            });
+            renderedMarkers.clear();
+
+            markers.forEach((marker) => {
+                if (marker) {
+                    marker.setMap(null);
+                }
+            });
+            markers = [];
+        }
+
+    </script>
+</head>
+<body onload='initMap()'>
+    <div id='map'></div>
+</body>
+</html>
