@@ -52,6 +52,11 @@ Before starting, ensure you have the following:
 ├── styles.css          # CSS file for styling
 ├── script.js           # JavaScript file for API interactions
 └── README.md           # Documentation
+└── MainWindow.xaml
+└── MainWindow.xaml.cs
+└── LastSegmentCoverter.cs
+└── MapView.html
+
 ```
 
 ## Configuration
