@@ -11,12 +11,11 @@ namespace mapAdvanced
         {
             if (value is string input)
             {
-                // Split the string by '>' and return the last segment (trimmed)
                 var segments = input.Split(new[] { '>' }, StringSplitOptions.RemoveEmptyEntries);
                 return segments.Length > 0 ? segments[segments.Length - 1].Trim() : input;
             }
 
-            return value; // Return original value if it's not a string
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
