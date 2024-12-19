@@ -17,6 +17,15 @@ Before starting, ensure you have the following:
 - An API key for accessing the Google Maps API
 - Basic knowledge of HTML, CSS, and JavaScript
 
+- ## Technologies Used
+- **Google Maps JavaScript API**: For map rendering and interaction.
+- **HTML5**: Structuring the webpage.
+- **CSS3**: Styling the interface.
+- **JavaScript (Vanilla)**: Implementing functionality and API integration.
+- **Google Cloud Platform (GCP)**: Managing API keys and project settings.
+- **C#**: Backend processing and data handling.
+- **WPF (Windows Presentation Foundation)**: Desktop application interface.
+
 ## Installation
 1. Clone the repository:
    ```bash
