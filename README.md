@@ -35,14 +35,17 @@ Before starting, ensure you have the following:
 
 2. Install dependencies:
    This project uses vanilla JavaScript and doesn't require additional packages. If there are additional dependencies, include them in this section.
+   There is also requirement of installation of webview in the CS file
 
-3. Set up your API key:
+4. Set up your API key:
    - Replace `YOUR_API_KEY` in the code with your actual Google Maps API key.
+   - You also need to use different API for fething the Data from the BPC of Bhutan
 
 ## Usage
-1. Open the `index.html` file in your browser to view the map interface.
+1. Open the Visualstudio and run the software
 2. Customize the code to fit your requirements:
    - **Markers:** Edit the marker data in `script.js`.
+   - **Logic and API handling:**Develop all the Logics in the `MainWindow.xaml.cs` file
    - **Map Options:** Modify the map's zoom level, center, and other properties in `script.js`.
 
 ## File Structure
