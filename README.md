@@ -25,6 +25,7 @@ Before starting, ensure you have the following:
 - **Google Cloud Platform (GCP)**: Managing API keys and project settings.
 - **C#**: Backend processing and data handling.
 - **WPF (Windows Presentation Foundation)**: Desktop application interface.
+- **XAML:** Development of Frontend of the Software.
 
 ## Installation
 1. Clone the repository:
