@@ -100,6 +100,8 @@ Make sure to include the Google Maps API script in `index.html`:
 - [Google Maps JavaScript API Documentation](https://developers.google.com/maps/documentation/javascript/overview)
 - [Google Cloud Platform Console](https://console.cloud.google.com/)
 
-
+### Application UI
 ![image](https://github.com/user-attachments/assets/da9bfbf5-652f-487f-ab9e-df243d7283a8)
+
+### Datasets from the BPC
 ![image](https://github.com/user-attachments/assets/5c6947a7-9953-42fc-812d-b524662455d9)
